@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">NeoPixel</string>
+    <string name="action_settings">Settings</string>
+    <string name="colour_title">Choose colour</string>
+    <string name="sequence_title">Sequence</string>
+    <string name="sequenceText">Choose your LED pattern</string>
+    <string name="speedText">Set speed for LED pattern</string>
+    <string name="offText">Turn LEDs Off</string>
+    <string name="setColourText">Set Colour</string>
+    <string name="setColourWipeText">Colour Wipe</string>
+    <string name="setCWBackText">Colour Wipe Back</string>
+    <string name="setRainbowText">Rainbow</string>
+    <string name="setTCText">Theatre Chase</string>
+    <string name="select_colour">Use <![CDATA[<i>Choose colour</i>]]> tab to select colour</string>
+    <string name="slow">Slow</string>
+    <string name="medium">Medium</string>
+    <string name="fast">Fast</string>
+
+    // URL paths for various commands
+    <string name="getparms">getparms</string>
+    <string name="reset">reset</string>
+    <string name="setcolour">setcolour</string>
+    <string name="colourwipe">colourwipe</string>
+    <string name="colourwipeback">colourwipeback</string>
+    <string name="rainbow">rainbow</string>
+    <string name="theatrechase">theatrechase</string>
+
+    // Queryparm strings
+    <string name="queryColour">colour</string>
+    <string name="queryWait">wait</string>
+    <string name="queryIterations">iterations</string>
+    <string name="queryClear">clear</string>
+    <string name="querysequence">sequence</string>
+
+    // Default values
+    <string name="defColour">2010f0</string>
+    <string name="defClear">Y</string>
+
+</resources>

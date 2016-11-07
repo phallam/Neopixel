@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context=".MainActivity">
+
+    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2">
+
+        <TextView
+            android:id="@+id/sequenceTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/tab_padding_bottom"
+            android:paddingTop="@dimen/tab_padding_bottom"
+            android:text="@string/sequenceText"
+            android:textSize="@dimen/TitleSize"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            />
+
+        <RadioButton
+            android:id="@+id/offButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="8dp"
+            android:text="@string/offText"
+            />
+
+        <ImageButton
+            android:id="@+id/offImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/stripoff"
+            />
+
+        <RadioButton
+            android:id="@+id/setButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="8dp"
+            android:text="@string/setColourText"
+            />
+
+        <ImageButton
+            android:id="@+id/setImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/stripon"
+            />
+
+        <RadioButton
+            android:id="@+id/colourwipeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="8dp"
+            android:text="@string/setColourWipeText"
+            />
+
+        <pl.droidsonroids.gif.GifImageButton
+            android:id="@+id/colourwipeImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/colourwipe"
+            />
+
+        <RadioButton
+            android:id="@+id/cwBackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="8dp"
+            android:text="@string/setCWBackText"
+            />
+
+        <pl.droidsonroids.gif.GifImageButton
+            android:id="@+id/cwBackImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/colourwipeback"
+            />
+
+        <RadioButton
+            android:id="@+id/rainbowButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="8dp"
+            android:text="@string/setRainbowText"
+            />
+
+        <pl.droidsonroids.gif.GifImageButton
+            android:id="@+id/rainbowImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/rainbow"
+            />
+
+        <RadioButton
+            android:id="@+id/theatrechaseButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="8dp"
+            android:text="@string/setTCText"
+            />
+
+        <pl.droidsonroids.gif.GifImageButton
+            android:id="@+id/theatrechaseImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/theatrechase"
+            />
+
+    </GridLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/relativeLayout1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                  android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/SpeedSize"
+        android:paddingBottom="@dimen/tab_padding_bottom"
+        android:paddingTop="@dimen/tab_padding_bottom"
+        android:text="@string/speedText"
+        />
+
+         <SeekBar
+            android:id="@+id/speedBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:max="10"
+
+            android:progress="0"
+            android:progressDrawable="@drawable/mymaterialtheme_scrubber_progress_horizontal_holo_light"
+            android:thumb="@drawable/mymaterialtheme_scrubber_control_selector_holo_light"
+            android:theme="@style/Widget.AppCompat.SeekBar.Discrete"
+            />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal" >
+            <TextView
+                android:id="@+id/tvLabel1"
+                android:paddingLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/slow" />
+            <TextView
+                android:id="@+id/tvLabel2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/medium" />
+            <TextView
+                android:id="@+id/tvLabel3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:paddingRight="10dp"
+                android:text="@string/fast" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
