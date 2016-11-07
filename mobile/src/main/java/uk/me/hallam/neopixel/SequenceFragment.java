@@ -28,12 +28,12 @@ interface AsyncResponse {
 
 interface SequenceSetter {
     void setSequence(String sequence);
-
     String getSequence();
 
     void setSpeed(int speed);
-
     int getSpeed();
+
+    boolean findSequence(String sequence);
 }
 
 public class SequenceFragment extends Fragment implements OnClickListener, SeekBar.OnSeekBarChangeListener {
@@ -107,14 +107,6 @@ public class SequenceFragment extends Fragment implements OnClickListener, SeekB
         theatrechaseImage.setOnClickListener(this);
         speed.setOnSeekBarChangeListener(this);
 
-        // Done in a runnable after 0.5 second delay to allow getparms GET to return current values on server (uses defaults if no (or slow) response
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            public void run() {
-                setRadioButtons(getButtonFromSequence(sequenceSetter.getSequence()));
-                speed.setProgress(sequenceSetter.getSpeed());
-                    }
-        },500);
-
         //Ion.with(v)
         //    .load(Uri.parse("android.resource://uk.me.hallam.neopixel/drawable/theatrechase").toString());
         //Glide
@@ -124,7 +116,24 @@ public class SequenceFragment extends Fragment implements OnClickListener, SeekB
         //        .asGif()
         //        .fitCenter()
         //        .into(v);
+
         return sequence;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Done in a runnable after 0.5 second delay to allow getparms GET to return current values on server (
+        // Uses defaults if no (or slow) response
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            public void run() {
+                String seq = sequenceSetter.getSequence();
+                setRadioButtons(getButtonFromSequence(seq));
+                speed.setProgress(sequenceSetter.getSpeed());
+                speed.invalidate();
+                sequenceSetter.findSequence(seq);
+            }
+        }, 500);
     }
 
     @Override
@@ -139,7 +148,8 @@ public class SequenceFragment extends Fragment implements OnClickListener, SeekB
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        seekBar.setSecondaryProgress(seekBar.getProgress()); // set the shade of the previous value.
+        // Set the shade of the previous value.
+        seekBar.setSecondaryProgress(seekBar.getProgress());
     }
 
     @Override
@@ -191,6 +201,7 @@ public class SequenceFragment extends Fragment implements OnClickListener, SeekB
         selected.setChecked(true);
     }
 
+    // Get the button resource ID for the sequence string passed
     RadioButton getButtonFromSequence(String sequence) {
         if (sequence.equals(getResources().getString(R.string.reset)))
             return offButton;

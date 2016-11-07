@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
@@ -21,7 +20,6 @@ import com.flask.colorpicker.slider.OnValueChangedListener;
 
 interface ColourSetter {
     void setColour(String colour);
-
     String getColour();
 
 }
@@ -58,44 +56,31 @@ public class ColourFragment extends Fragment {
         // Inflate the layout for this fragment
         View colour = inflater.inflate(R.layout.fragment_colour, container, false);
 
+        // Find the colour picker components
         colorPickerView = (ColorPickerView) colour.findViewById(R.id.color_picker_view);
         lightnessSlider = (LightnessSlider) colour.findViewById(R.id.v_lightness_slider);
 
         colorPickerView.addOnColorSelectedListener(new OnColorSelectedListener() {
             @Override
             public void onColorSelected(int selectedColor) {
-                //MainActivity ourActivity = ((MainActivity) getActivity());
-                //ourActivity.setColour(Integer.toHexString(selectedColor).substring(2));
+                // Convert colour to string
                 String colour = Integer.toHexString(selectedColor);
-                while (colour.length() < 8)
-                    colour = '0'+colour;
-                colour = colour.substring(2);
+                // Pad with 0s or remove leading ff as appropriate
+                colour = ("ff000000" + colour).substring(colour.length() + 2);
                 colourSetter.setColour(colour);
-                Toast.makeText(
-                        getActivity(),
-                        //"selectedColor: " + Integer.toHexString(selectedColor).toUpperCase(),
-                        "selectedColor: " + colour.toUpperCase(),
-                        Toast.LENGTH_SHORT).show();
             }
         });
 
         lightnessSlider.setOnValueChangedListener(new OnValueChangedListener() {
             @Override
             public void onValueChanged(float value) {
-                //MainActivity ourActivity = ((MainActivity) getActivity());
-                //ourActivity.setColour(Integer.toHexString(selectedColor).substring(2));
+                // Get selected colour as a string
                 String selectedColor = Integer.toHexString(colorPickerView.getSelectedColor());
-                while (selectedColor.length() < 8)
-                    selectedColor = '0'+selectedColor;
-                selectedColor = selectedColor.substring(2);
+                // Pad with 0s or remove leading ff as appropriate
+                selectedColor = ("ff000000" + selectedColor).substring(selectedColor.length() + 2);
                 colourSetter.setColour(selectedColor);
-                Toast.makeText(
-                        getActivity(),
-                        "selectedColor: " + selectedColor.toUpperCase(),
-                        Toast.LENGTH_SHORT).show();
             }
         });
-
 
         return colour;
     }
@@ -103,16 +88,14 @@ public class ColourFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        int c = (int) Long.parseLong("ff"+colourSetter.getColour(),16);
-        //colorPickerView.setInitialColor(c, false);
 
-        // Done in a runnable after 0.5 second delay to allow getparms GET to return current values on server (uses defaults if no (or slow) response
-        new Handler().postDelayed(new Runnable() {
+        // Done in a runnable after 0.5 second delay to allow getparms GET to return current values on server (
+        // Uses defaults if no (or slow) response
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
-                int c = (int) Long.parseLong("ff"+colourSetter.getColour(),16);
-                ColourFragment.this.colorPickerView.setInitialColor(c, false);
-                //colorPickerView.setInitialColors(new Integer[]{0x00d7d7}, 0);
-                //lightnessSlider.setColor(255);
+                int c = (int) Long.parseLong("ff" + colourSetter.getColour(), 16);
+                colorPickerView.setInitialColor(c, false);
+                colorPickerView.invalidate();
             }
         }, 500);
     }

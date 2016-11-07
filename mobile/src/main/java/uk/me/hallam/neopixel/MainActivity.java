@@ -1,6 +1,5 @@
 package uk.me.hallam.neopixel;
 
-import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,11 +34,13 @@ public class MainActivity extends AppCompatActivity
     private boolean needIterations = false;
     private boolean needClear = false;
     private boolean httpResponseReceived = false;
+    ArrayList<LEDSequence> sequences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        sequences = buildSequences();
         // Set default values
         lightSequence = getResources().getString(R.string.getparms);
         lightColour = getResources().getString(R.string.defColour);
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity
         lightIterations = 0;
         lightClear = getResources().getString(R.string.defClear);
         // Call getparms to obtain current LED status
-        setSequence(getResources().getString(R.string.getparms));
+        doSetSequence(getResources().getString(R.string.getparms), false);
 
         setContentView(R.layout.activity_main);
 
@@ -106,7 +108,8 @@ public class MainActivity extends AppCompatActivity
 
     public void setColour(String colour) {
         lightColour = colour;
-        setSequence(lightSequence);
+        if (needColour)
+            doSetSequence(lightSequence, false);
     }
 
     public String getSequence() {
@@ -114,49 +117,42 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void setSequence(String sequence) {
-        // Reset all the query parm requirements
-        needColour = false;
-        needWait = false;
-        needIterations = false;
-        needClear = false;
-
-        if (sequence.equals(getResources().getString(R.string.getparms)))
-            lightSequence = sequence;
-        else if (sequence.equals(getResources().getString(R.string.reset)))
-            lightSequence = sequence;
-        else if (sequence.equals(getResources().getString(R.string.setcolour))) {
-            popupMessage(getString(R.string.select_colour));
-            lightSequence = sequence;
-            needColour = true;
-        } else if (sequence.equals(getResources().getString(R.string.colourwipe))) {
-            popupMessage(getString(R.string.select_colour));
-            lightSequence = sequence;
-            needColour = true;
-            needWait = true;
-            needIterations = true;
-        } else if (sequence.equals(getResources().getString(R.string.colourwipeback))) {
-            popupMessage(getString(R.string.select_colour));
-            lightSequence = sequence;
-            needColour = true;
-            needWait = true;
-            needIterations = true;
-        } else if (sequence.equals(getResources().getString(R.string.rainbow))) {
-            lightSequence = sequence;
-            needWait = true;
-            needIterations = true;
-        } else if (sequence.equals(getResources().getString(R.string.theatrechase))) {
-            popupMessage(getString(R.string.select_colour));
-            lightSequence = sequence;
-            needColour = true;
-            needWait = true;
-            needIterations = true;
-        }
-
-        if (lightIterations > 0 && needIterations)
-            needClear = true;
-        doHttpGet();
+        doSetSequence(sequence, true);
     }
 
+    // Set the LED sequence with/without a toast message to choose colot
+    public void doSetSequence(String sequence, boolean popup) {
+
+        boolean found = findSequence(sequence);
+
+        if (found) {
+            if (lightIterations > 0 && needIterations)
+                needClear = true;
+            else
+                needClear = false;
+
+            if (needColour && popup)
+                popupMessage(getString(R.string.select_colour));
+
+            doHttpGet();
+        }
+    }
+
+    public boolean findSequence(String sequence) {
+        Iterator<LEDSequence> list = sequences.iterator();
+        boolean found = false;
+        while (list.hasNext() && !found) {
+            LEDSequence seq = list.next();
+            if (seq.getSequence().equals(sequence)) {
+                lightSequence = sequence;
+                needColour = seq.isNeedColour();
+                needWait = seq.isNeedWait();
+                needIterations = seq.isNeedIterations();
+                found = true;
+            }
+        }
+        return found;
+    }
     private void popupMessage(String msg) {
         Toast.makeText(this,
                 Html.fromHtml(msg),
@@ -164,61 +160,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     public int getSpeed() {
-        if (isbetween(lightWait, 1, 5))
-            return 9;
-        else if (isbetween(lightWait, 6, 10))
-            return 8;
-        else if (isbetween(lightWait, 11, 25))
-            return 7;
-        else if (isbetween(lightWait, 26, 50))
-            return 6;
-        else if (isbetween(lightWait, 51, 100))
-            return 5;
-        else if (isbetween(lightWait, 101, 200))
-            return 4;
-        else if (isbetween(lightWait, 201, 500))
-            return 3;
-        else if (isbetween(lightWait, 501, 1000))
-            return 2;
-        else if (isbetween(lightWait, 1001, 2500))
-            return 1;
-        else return 0;
+        for(int i=9; i>0; i--){
+            if (lightWait <= waitTimes[i])
+                return i;
+        }
+        return 0;
     }
 
+    // Wait times that correspond to speed bar values
+    final int[] waitTimes = new int[]{5000, 2500, 1000, 500, 200, 100, 50, 25, 10, 5};
+
     public void setSpeed(int speed) {
-        switch (speed) {
-            case 9:
-                lightWait = 5;
-                break;
-            case 8:
-                lightWait = 10;
-                break;
-            case 7:
-                lightWait = 25;
-                break;
-            case 6:
-                lightWait = 50;
-                break;
-            case 5:
-                lightWait = 100;
-                break;
-            case 4:
-                lightWait = 200;
-                break;
-            case 3:
-                lightWait = 500;
-                break;
-            case 2:
-                lightWait = 1000;
-                break;
-            case 1:
-                lightWait = 2500;
-                break;
-            case 0:
-                lightWait = 5000;
-                break;
+        if (speed >= 0 && speed <= 9) {
+            lightWait = waitTimes[speed];
+
+            if (needWait)
+                doSetSequence(lightSequence, false);
         }
-        setSequence(lightSequence);
     }
 
     public static boolean isbetween(int i, int minValueInclusive, int maxValueInclusive) {
@@ -294,5 +252,20 @@ public class MainActivity extends AppCompatActivity
                 httpResponseReceived = true;
             }
         }
+    }
+
+    // Set up an ArrayList to hold the LED sequences that we support
+    // Values should really be in an external file, but...
+    ArrayList<LEDSequence> buildSequences() {
+        ArrayList<LEDSequence> list = new ArrayList<LEDSequence>();
+        // Add sequences - path, needsColour, needsWait, needsIterations
+        list.add(new LEDSequence(getResources().getString(R.string.getparms), false, false, false));
+        list.add(new LEDSequence(getResources().getString(R.string.reset), false, false, false));
+        list.add(new LEDSequence(getResources().getString(R.string.setcolour), true, false, false));
+        list.add(new LEDSequence(getResources().getString(R.string.colourwipe), true, true, true));
+        list.add(new LEDSequence(getResources().getString(R.string.colourwipeback), true, true, true));
+        list.add(new LEDSequence(getResources().getString(R.string.rainbow), false, true, true));
+        list.add(new LEDSequence(getResources().getString(R.string.theatrechase), true, true, true));
+        return list;
     }
 }
